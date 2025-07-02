@@ -15,9 +15,6 @@
       <li @click="$emit('clicked')"><i class="fa-regular fa-address-card"></i> Authors</li>
       </Router-link>
 
-      <li @click="$emit('clicked')"><i class="fa-solid fa-plus"></i> Add Post</li>
-      <li id="addAuthor"><i class="fa-solid fa-user-plus"></i> Add Author</li>
-
       <Router-link :to="{ name: 'login'}">
       <li @click="$emit('clicked')"><i class="fa-solid fa-right-to-bracket"></i> Login</li>
       </Router-link>

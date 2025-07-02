@@ -1,5 +1,5 @@
 <template>
-  <div class="notifications-container">
+  <div class="notification-container">
     <div
       v-for="(notification, index) in notifications"
       :key="index"
@@ -12,8 +12,8 @@
       <span class="close-btn" @click="removeMessage(index)"
         ><i class="fa-solid fa-circle-xmark"></i
       ></span>
-    </div>
   </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -26,28 +26,34 @@ const removeMessage = (id: number) => {
 };
 </script>
 
+
 <style>
-.notifications-container {
+.notification-container {
   position: fixed;
-  top: 130px;
-  left: 300px;
-  right: 20px;
+  top: 5%;
+  left: 20%;
+  right: 1.2rem;
+  max-width: 600px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
   z-index: 1050;
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+  animation: fadeIn 0.4s ease-in-out;
 }
 
 .notification {
+  display: block;
   position: relative;
-  padding: 1.7rem 1.5rem;
+  border: 1px solid #badbcc;
   border-radius: 5px;
+  padding: 1rem 1.5rem;
   font-size: 0.95rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid transparent;
   animation: fadeIn 0.4s ease-in-out;
+  width: 100%;
 }
+
 
 .notification.success {
   background-color: #d1e7dd;
@@ -59,6 +65,10 @@ const removeMessage = (id: number) => {
   background-color: #f8d7da;
   color: #842029;
   border-color: #f5c2c7;
+}
+
+.notification p {
+  margin: 0;
 }
 
 .notification .close-btn {
@@ -81,10 +91,4 @@ const removeMessage = (id: number) => {
   }
 }
 
-@media (max-width: 925px) {
-  .notifications-container {
-    left: 20px;
-    right: 20px;
-  }
-}
 </style>
