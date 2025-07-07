@@ -10,8 +10,8 @@ export const useNotificationStore = defineStore("notification", {
       this.notifications.push(notification);
       setTimeout(() => {
         this.notifications.shift();
-      }, 3000);
-    },
+      }, 2000);
+  },
     removeNotification(index: number) {
       this.notifications.splice(index, 1);
     },

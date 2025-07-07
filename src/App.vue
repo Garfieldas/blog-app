@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import NavBar from './components/UI/NavBar.vue';
-import AppHeader from './components/UI/AppHeader.vue';
-import Overlay from './components/UI/Overlay.vue';
-import Notification from './components/UI/Notification.vue';
+import NavBar from './components/Layout/NavBar.vue';
+import AppHeader from './components/Layout/AppHeader.vue';
+import Overlay from './components/Layout/Overlay.vue';
+import Notification from './components/Layout/Notification.vue';
 import { ref } from 'vue';
 
 const showNav = ref(false);

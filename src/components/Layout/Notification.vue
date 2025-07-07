@@ -30,10 +30,9 @@ const removeMessage = (id: number) => {
 <style>
 .notification-container {
   position: fixed;
-  top: 5%;
+  top: 50%;
   left: 20%;
   right: 1.2rem;
-  max-width: 600px;
   margin: 0 auto;
   z-index: 1050;
   display: flex;
