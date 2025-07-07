@@ -1,29 +1,28 @@
 import axios from "axios";
 import { baseUrl } from "../../utils/constants";
-import { useNotificationStore } from "@/stores/notificationStore";
 
 const api = axios.create({
   baseURL: baseUrl,
 });
 
-export const getAllAuthors = async () => {
-  const store = useNotificationStore();
+
+export const getAllAuthors = async (pageNumber: number, itemsPerPage: number) => {
   try {
-    const response = await api.get("/authors");
+    const response = await api.get(`/authors?_page=${pageNumber}&_limit=${itemsPerPage}`);
     const fetchedAuthors = response.data;
-    if(fetchedAuthors){
-    store.AddNotification({
-      type: "success",
-      message: "Authors fetched from database",
-    });
-    return fetchedAuthors;
+
+    const totalItems = response.headers['x-total-count'];
+    return {
+      authors: fetchedAuthors,
+      totalItems,
+      status: true
+    }
   }
-  } catch (error: any) {
-    const errorMsg =
-      error?.response?.data?.message || "Failed to fetch authors.";
-    store.AddNotification({
-      type: "error",
-      message: errorMsg,
-    });
+
+  catch (error: any) {
+    return {
+      error: error.message,
+      status: false
+    }
   }
 };

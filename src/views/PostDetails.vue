@@ -9,6 +9,7 @@
       <div class="post-bottom">
       <div class="post-actions">
         <a class="button" @click="goBack">Back</a>
+        <a class="button">Edit</a>
         <a class="button delete"> Delete</a>
       </div>
       <div class="post-meta">
@@ -33,22 +34,33 @@ import { getSinglePost } from '@/composables/postService';
 import { onMounted, ref, watch } from 'vue';
 import type { Post } from '@/types/postType';
 import { useRouter } from 'vue-router';
-import { toDate, displayDate } from '@/composables/dateService';
+import { toDate, displayDate  } from '../../utils/dateService';
+import { useNotificationStore } from '@/stores/notificationStore';
 
 
 const props = defineProps(['id']);
 const post = ref<Post | null>(null);
 const router = useRouter();
 const goBack = () => router.go(-1);
+const store = useNotificationStore();
 
 const fetchPost = async (id: number) => {
   
-  const fetchedPost = await getSinglePost(id);
-  if (fetchedPost) {
-    post.value = fetchedPost;
+  const fetchedData = await getSinglePost(id);
+  const status = fetchedData?.status
+  if (status) {
+    post.value = fetchedData.post;
+    store.AddNotification({
+      type: 'success',
+      message: 'Post fetched successfully'
+    })
   }
   else {
     router.push({name: 'postNotFound'})
+    store.AddNotification({
+      type: 'error',
+      message: fetchedData?.error
+    })
   }
 }
 

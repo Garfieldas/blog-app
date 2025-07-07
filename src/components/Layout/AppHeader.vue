@@ -1,10 +1,6 @@
 <template>
 <header class="header">
   <div class="header-left">
-    <div class="search">
-      <img src="../../assets/icons/search.svg" alt="search" />
-      <input type="text" name="search" id="search" />
-    </div>
   </div>
   <div class="header-right">
     <div class="greeting">
