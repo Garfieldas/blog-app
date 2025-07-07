@@ -1,6 +1,6 @@
 <template>
   <Teleport to=".header-left">
-    <SearchBar />
+    <SearchBar v-model:query="query" v-model:is-disabled="isDisabled" />
   </Teleport>
 
   <PageLayout title="Posts">
@@ -15,12 +15,8 @@
     </template>
 
     <template v-slot:pagination>
-      <Pagination
-        v-model:currentPage="currentPage"
-        v-model:totalItems="totalItems"
-        :itemsPerPage="itemsPerPage"
-        v-model:isDisabled="isDisabled"
-      />
+      <Pagination v-model:currentPage="currentPage" v-model:totalItems="totalItems" :itemsPerPage="itemsPerPage"
+        v-model:isDisabled="isDisabled" />
     </template>
   </PageLayout>
 </template>
@@ -41,17 +37,28 @@ const itemsPerPage = 2;
 const totalItems = ref(0);
 const isDisabled = ref(false);
 const isFirstLoad = ref(true);
+const query = ref('');
 const store = useNotificationStore();
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-const fetchRequest = async (page: number, perPage: number) => {
+const fetchRequest = async (page: number, perPage: number, query: string) => {
   try {
-    const fetchedData = await getAllPosts(page, perPage);
-    const fetchedPosts = fetchedData?.posts || [];
-    const total = fetchedData?.totalItems || 0;
+    const fetchedData = await getAllPosts(page, perPage, query);
+    const fetchedPosts = fetchedData?.posts;
+    const total = fetchedData?.totalItems;
+    const totalPages = Math.ceil(total / itemsPerPage)
+
+    if (page > totalPages && totalPages > 0) {
+      currentPage.value = totalPages;
+      store.AddNotification({
+        type: 'error',
+        message: 'Requated page does not exist'
+      })
+      return;
+    }
 
     posts.value = fetchedPosts;
     totalItems.value = total;
-    isDisabled.value = false;
 
     if (fetchedPosts.length === 0 && total === 0) {
       isDisabled.value = true;
@@ -72,7 +79,7 @@ const fetchRequest = async (page: number, perPage: number) => {
 
     store.AddNotification({
       type: "error",
-      message: error.message
+      message: 'Network error'
     });
   }
 };
@@ -80,22 +87,18 @@ const fetchRequest = async (page: number, perPage: number) => {
 watch(
   currentPage,
   async (newPage) => {
-    const tempData = await getAllPosts(newPage, itemsPerPage);
-    const total = tempData?.totalItems || 0;
-    const totalPages = Math.ceil(total / itemsPerPage);
-
-    if (newPage > totalPages && totalPages > 0) {
-      currentPage.value = totalPages;
-      store.AddNotification({
-        type: "error",
-        message: "Requested page does not exist",
-      });
-      return;
-    }
-
-    totalItems.value = total;
-    await fetchRequest(newPage, itemsPerPage);
+    await fetchRequest(newPage, itemsPerPage, query.value);
   },
   { immediate: true }
 );
+
+watch(query, (newValue) => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
+  debounceTimer = setTimeout(() => {
+    currentPage.value = 1;
+    fetchRequest(currentPage.value, itemsPerPage, newValue);
+  }, 300);
+});
 </script>

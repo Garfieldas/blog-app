@@ -11,7 +11,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 const currentPage: any = defineModel('currentPage');
 const totalItems: any = defineModel('totalItems');
