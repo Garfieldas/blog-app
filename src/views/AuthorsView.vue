@@ -1,6 +1,6 @@
 <template>
   <Teleport to=".header-left">
-    <SearchBar />
+    <SearchBar v-model:query="query" v-model:is-disabled="isDisabled" />
   </Teleport>
   <PageLayout title="Authors">
     <template v-slot:no-data>
@@ -32,19 +32,30 @@ const authors = ref<Author[]>([]);
 const currentPage = ref(1);
 const totalItems = ref(2);
 const itemsPerPage = 2;
-const store = useNotificationStore();
 const isDisabled = ref(false);
 const isFirstLoad = ref(true);
+const query = ref('');
+const store = useNotificationStore();
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-const fetchRequest = async (page: number, perPage: number) => {
+const fetchRequest = async (page: number, perPage: number, query: string) => {
   try {
-    const fetchedData = await getAllAuthors(page, perPage);
-    const fetchedAuthors = fetchedData?.authors || [];
-    const total = fetchedData?.totalItems || 0;
+    const fetchedData = await getAllAuthors(page, perPage, query);
+    const fetchedAuthors = fetchedData?.authors;
+    const total = fetchedData?.totalItems;
+    const toalPages = Math.ceil(total / itemsPerPage);
+
+    if (page > toalPages && toalPages > 0) {
+      currentPage.value = toalPages;
+      store.AddNotification({
+        type: "error",
+        message: "Requested page does not exist",
+      });
+      return;
+    }
 
     authors.value = fetchedAuthors;
     totalItems.value = total;
-    isDisabled.value = false;
 
     if (authors.value.length === 0 && total === 0) {
       isDisabled.value = true;
@@ -65,7 +76,7 @@ const fetchRequest = async (page: number, perPage: number) => {
 
     store.AddNotification({
       type: "error",
-      message: error.message
+      message: 'Network error'
     });
   }
 };
@@ -73,24 +84,20 @@ const fetchRequest = async (page: number, perPage: number) => {
 watch(
   currentPage,
   async (newPage) => {
-    const tempData = await getAllAuthors(newPage, itemsPerPage);
-    const total = tempData?.totalItems || 0;
-    const totalPages = Math.ceil(total / itemsPerPage);
-
-    if (newPage > totalPages && totalPages > 0) {
-      currentPage.value = totalPages;
-      store.AddNotification({
-        type: "error",
-        message: "Requested page does not exist",
-      });
-      return;
-    }
-
-    totalItems.value = total;
-    await fetchRequest(newPage, itemsPerPage);
+    await fetchRequest(newPage, itemsPerPage, query.value);
   },
   { immediate: true }
 );
+
+watch(query, (newValue) => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
+  debounceTimer = setTimeout(() => {
+    currentPage.value = 1;
+    fetchRequest(currentPage.value, itemsPerPage, newValue);
+  }, 300);
+});
 </script>
 
 <style>

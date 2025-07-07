@@ -6,9 +6,9 @@ const api = axios.create({
 });
 
 
-export const getAllAuthors = async (pageNumber: number, itemsPerPage: number) => {
+export const getAllAuthors = async (pageNumber: number, itemsPerPage: number, query: string) => {
   try {
-    const response = await api.get(`/authors?_page=${pageNumber}&_limit=${itemsPerPage}`);
+    const response = await api.get(`/authors?_page=${pageNumber}&_limit=${itemsPerPage}&q=${query}`);
     const fetchedAuthors = response.data;
 
     const totalItems = response.headers['x-total-count'];
