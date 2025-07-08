@@ -7,10 +7,13 @@
         <p>{{ post?.body }}</p>
       </article>
       <div class="post-bottom">
-      <div class="post-actions">
+      <div class="post-actions" v-if="auth.isLoggedIn">
         <a class="button" @click="goBack">Back</a>
         <a class="button">Edit</a>
         <a class="button delete"> Delete</a>
+      </div>
+      <div class="post-actions" v-else>
+        <a class="button" @click="goBack">Back</a>
       </div>
       <div class="post-meta">
         <p><strong>Author</strong>: {{ post.author.name }} {{ post.author.surname }}</p>
@@ -36,6 +39,7 @@ import type { Post } from '@/types/postType';
 import { useRouter } from 'vue-router';
 import { toDate, displayDate  } from '../../utils/dateService';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { useAuthenticationStore } from '@/stores/authenticationStore';
 
 
 const props = defineProps(['id']);
@@ -43,6 +47,7 @@ const post = ref<Post | null>(null);
 const router = useRouter();
 const goBack = () => router.go(-1);
 const store = useNotificationStore();
+const auth = useAuthenticationStore();
 
 const fetchPost = async (id: number) => {
   

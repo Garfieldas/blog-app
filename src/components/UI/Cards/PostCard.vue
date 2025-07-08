@@ -12,7 +12,7 @@
       <p v-else>Created_at: {{ displayDate(post.created_at) }}</p>
 
     </RouterLink>
-    <div class="buttons">
+    <div class="buttons" v-if="store.isLoggedIn">
       <i class="fa-solid fa-eye"></i>
       <i class="fa-solid fa-trash"></i>
     </div>
@@ -20,5 +20,7 @@
 </template>
 <script setup lang="ts">
 import { toDate, displayDate  } from '../../../../utils/dateService';
-const props = defineProps(['post'])
+import { useAuthenticationStore } from '@/stores/authenticationStore';
+const props = defineProps(['post']);
+const store = useAuthenticationStore();
 </script>
