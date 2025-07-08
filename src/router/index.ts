@@ -4,6 +4,8 @@ import PostDetails from '@/views/PostDetails.vue';
 import LoginView from '@/views/LoginView.vue';
 import Error404 from '@/views/Error404.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthenticationStore } from '@/stores/authenticationStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,7 +40,17 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: LoginView,
+
+      beforeEnter: (to, from, next) => {
+        const store = useAuthenticationStore();
+        if (store.isLoggedIn) {
+          next({name: 'posts'})
+        }
+        else {
+          next();
+        }
+      }
     },
     {
       path: '/:pathMatch(.*)',
