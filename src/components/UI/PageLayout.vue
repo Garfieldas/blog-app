@@ -3,6 +3,7 @@
     <div class="posts">
       <span class="title">{{ title }}</span>
       <slot name="no-data"> </slot>
+      <slot name="buttons"></slot>
       <div class="card-wrapper">
         <slot name="card"> </slot>
       </div>

@@ -1,4 +1,36 @@
 <template>
+  <BaseModal
+    @modal-closed="toggleModal = false"
+    v-model:toggle-modal="toggleModal"
+    title="Create Author"
+  >
+    <template v-slot:modal-content>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="form-group">
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" required />
+      </div>
+    </template>
+  </BaseModal>
+
+  <BaseModal
+    @modal-closed="toggleEdit = false"
+    v-model:toggle-modal="toggleEdit"
+    title="Edit Author">
+    <template v-slot:modal-content>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="form-group">
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" required />
+      </div>
+    </template>
+  </BaseModal>
   <Teleport to=".header-left">
     <SearchBar v-model:query="query" v-model:is-disabled="isDisabled" />
   </Teleport>
@@ -8,12 +40,22 @@
         <h3>No authors found.</h3>
       </div>
     </template>
+    <template v-slot:buttons>
+      <div class="post-actions">
+        <a class="button" @click="toggleModal = true">Create new Author</a>
+      </div>
+    </template>
     <template v-slot:card>
-      <AuthorCard v-for="author in authors" :key="author.id" :author="author" />
+      <AuthorCard v-for="author in authors" :key="author.id" :author="author"
+      v-model:toggle-edit="toggleEdit" />
     </template>
     <template v-slot:pagination>
-      <Pagination v-model:currentPage="currentPage" v-model:totalItems="totalItems" :itemsPerPage="itemsPerPage"
-        v-model:isDisabled="isDisabled" />
+      <Pagination
+        v-model:currentPage="currentPage"
+        v-model:totalItems="totalItems"
+        :itemsPerPage="itemsPerPage"
+        v-model:isDisabled="isDisabled"
+      />
     </template>
   </PageLayout>
 </template>
@@ -27,6 +69,7 @@ import AuthorCard from "@/components/UI/Cards/AuthorCard.vue";
 import PageLayout from "@/components/UI/PageLayout.vue";
 import SearchBar from "@/components/UI/SearchBar.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
+import BaseModal from "@/components/UI/BaseModal.vue";
 
 const authors = ref<Author[]>([]);
 const currentPage = ref(1);
@@ -34,9 +77,11 @@ const totalItems = ref(2);
 const itemsPerPage = 2;
 const isDisabled = ref(false);
 const isFirstLoad = ref(true);
-const query = ref('');
+const query = ref("");
 const store = useNotificationStore();
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+const toggleModal = ref();
+const toggleEdit = ref()
 
 const fetchRequest = async (page: number, perPage: number, query: string) => {
   try {
@@ -76,7 +121,7 @@ const fetchRequest = async (page: number, perPage: number, query: string) => {
 
     store.AddNotification({
       type: "error",
-      message: 'Network error'
+      message: "Network error",
     });
   }
 };
@@ -91,7 +136,7 @@ watch(
 
 watch(query, (newValue) => {
   if (debounceTimer) {
-    clearTimeout(debounceTimer)
+    clearTimeout(debounceTimer);
   }
   debounceTimer = setTimeout(() => {
     currentPage.value = 1;
@@ -106,5 +151,47 @@ watch(query, (newValue) => {
   flex-direction: column;
   align-items: center;
   padding: 2em;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.7rem;
+  margin-bottom: 2em;
+}
+
+.button {
+  margin-top: auto;
+  background-color: var(--blue);
+  text-align: center;
+  border-radius: 999px;
+  border: none;
+  min-width: 200px;
+  padding: 15px;
+  padding: 1em 5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, transform 0.1s;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.button:hover {
+  background-color: var(--border);
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+@media (max-width: 600px) {
+  .post-actions {
+    justify-content: center;
+  }
 }
 </style>
