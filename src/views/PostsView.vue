@@ -51,7 +51,7 @@
       </div>
     </template>
     <template v-slot:buttons>
-      <div class="post-actions">
+      <div class="post-actions" v-if="auth.isLoggedIn">
         <a class="button" @click="toggleCreate = true">Create new Post</a>
       </div>
     </template>
@@ -85,6 +85,7 @@ import PostCard from "@/components/UI/Cards/PostCard.vue";
 import PageLayout from "@/components/UI/PageLayout.vue";
 import SearchBar from "@/components/UI/SearchBar.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { useAuthenticationStore } from "@/stores/authenticationStore";
 import BaseModal from "@/components/UI/BaseModal.vue";
 
 const posts = ref<Post[]>([]);
@@ -95,9 +96,11 @@ const isDisabled = ref(false);
 const isFirstLoad = ref(true);
 const query = ref("");
 const store = useNotificationStore();
+const auth = useAuthenticationStore();
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 const toggleCreate = ref(false);
 const toggleEdit = ref(false);
+
 
 const fetchRequest = async (page: number, perPage: number, query: string) => {
   try {
@@ -159,4 +162,5 @@ watch(query, (newValue) => {
     fetchRequest(currentPage.value, itemsPerPage, newValue);
   }, 300);
 });
+
 </script>
