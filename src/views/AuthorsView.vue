@@ -1,35 +1,9 @@
 <template>
-  <BaseModal
-    @modal-closed="toggleModal = false"
-    v-model:toggle-modal="toggleModal"
-    title="Create Author"
-  >
-    <template v-slot:modal-content>
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" required />
-      </div>
-      <div class="form-group">
-        <label for="surname">Surname</label>
-        <input type="text" id="surname" required />
-      </div>
-    </template>
-  </BaseModal>
-
-  <BaseModal
-    @modal-closed="toggleEdit = false"
-    v-model:toggle-modal="toggleEdit"
-    title="Edit Author">
-    <template v-slot:modal-content>
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" required />
-      </div>
-      <div class="form-group">
-        <label for="surname">Surname</label>
-        <input type="text" id="surname" required />
-      </div>
-    </template>
+  <BaseModal v-model:toggle-modal="toggleModal" @modal-closed="toggleModal = false">
+    <slot>
+      <component :is="currentForm"
+      @submit-form="handleSubmit" />
+    </slot>
   </BaseModal>
   <Teleport to=".header-left">
     <SearchBar v-model:query="query" v-model:is-disabled="isDisabled" />
@@ -41,13 +15,12 @@
       </div>
     </template>
     <template v-slot:buttons>
-      <div class="post-actions">
-        <a class="button" @click="toggleModal = true">Create new Author</a>
+      <div class="post-actions" v-if="auth.isLoggedIn">
+        <a class="button" @click="switchComponent(CreateAuthorForm)">Create new Author</a>
       </div>
     </template>
     <template v-slot:card>
-      <AuthorCard v-for="author in authors" :key="author.id" :author="author"
-      v-model:toggle-edit="toggleEdit" />
+      <AuthorCard v-for="author in authors" :key="author.id" :author="author"/>
     </template>
     <template v-slot:pagination>
       <Pagination
@@ -62,14 +35,16 @@
 
 <script setup lang="ts">
 import { getAllAuthors } from "@/composables/authorService";
-import { ref, watch } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import type { Author } from "@/types/authorType";
 import Pagination from "@/components/UI/Pagination.vue";
 import AuthorCard from "@/components/UI/Cards/AuthorCard.vue";
 import PageLayout from "@/components/UI/PageLayout.vue";
 import SearchBar from "@/components/UI/SearchBar.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { useAuthenticationStore } from "@/stores/authenticationStore";
 import BaseModal from "@/components/UI/BaseModal.vue";
+import CreateAuthorForm from "@/components/UI/Forms/CreateAuthorForm.vue";
 
 const authors = ref<Author[]>([]);
 const currentPage = ref(1);
@@ -79,9 +54,10 @@ const isDisabled = ref(false);
 const isFirstLoad = ref(true);
 const query = ref("");
 const store = useNotificationStore();
+const auth = useAuthenticationStore();
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-const toggleModal = ref();
-const toggleEdit = ref()
+const currentForm = shallowRef(CreateAuthorForm);
+const toggleModal = ref(false);
 
 const fetchRequest = async (page: number, perPage: number, query: string) => {
   try {
@@ -126,6 +102,18 @@ const fetchRequest = async (page: number, perPage: number, query: string) => {
   }
 };
 
+const switchComponent = (component: any) => {
+  currentForm.value = component;
+  toggleModal.value = true
+}
+
+const handleSubmit = (isSuccess: boolean) => {
+  if (isSuccess){
+    fetchRequest(currentPage.value, itemsPerPage, query.value);
+  }
+  toggleModal.value = false
+}
+
 watch(
   currentPage,
   async (newPage) => {
@@ -143,6 +131,7 @@ watch(query, (newValue) => {
     fetchRequest(currentPage.value, itemsPerPage, newValue);
   }, 300);
 });
+
 </script>
 
 <style>
@@ -195,3 +184,4 @@ watch(query, (newValue) => {
   }
 }
 </style>
+

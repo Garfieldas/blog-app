@@ -11,11 +11,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 
 const currentPage: any = defineModel('currentPage');
 const totalItems: any = defineModel('totalItems');
-const isDisabled = defineModel('isDisabled');
+const isDisabled = defineModel<boolean>('isDisabled');
 const props = defineProps(['itemsPerPage'])
 const totalPages = computed(() => {
   return Math.ceil(totalItems.value / props.itemsPerPage)
