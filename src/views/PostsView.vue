@@ -1,7 +1,8 @@
 <template>
   <BaseModal v-model:toggle-modal="toggleModal" @modal-closed="toggleModal = false">
     <slot>
-      <component :is="currentForm" />
+      <component :is="currentForm"
+      @submit-form="handleSubmit" />
     </slot>
   </BaseModal>
   
@@ -55,7 +56,7 @@ import CreatePostForm from "@/components/UI/Forms/Posts/CreatePostForm.vue";
 
 const posts = ref<Post[]>([]);
 const currentPage = ref(1);
-const itemsPerPage = 2;
+const itemsPerPage = 5;
 const totalItems = ref(0);
 const isDisabled = ref(false);
 const isFirstLoad = ref(true);
@@ -64,7 +65,7 @@ const store = useNotificationStore();
 const auth = useAuthenticationStore();
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 const toggleModal = ref(false);
-const currentForm = shallowRef();
+const currentForm = shallowRef(CreatePostForm);
 
 
 const fetchRequest = async (page: number, perPage: number, query: string) => {
@@ -113,6 +114,13 @@ const fetchRequest = async (page: number, perPage: number, query: string) => {
 const switchComponent = (component: any) => {
   toggleModal.value = true;
   currentForm.value = component;
+}
+
+const handleSubmit = (isSuccess: boolean) => {
+  if (isSuccess){
+    fetchRequest(currentPage.value, itemsPerPage, query.value);
+  }
+  toggleModal.value = false
 }
 
 watch(
