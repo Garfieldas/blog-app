@@ -2,7 +2,8 @@
   <BaseModal v-model:toggle-modal="toggleModal" @modal-closed="toggleModal = false">
     <slot>
       <component :is="currentForm"
-      @submit-form="handleSubmit" />
+      @submit-form="handleSubmit"
+      :author="selectedAuthor" />
     </slot>
   </BaseModal>
   <Teleport to=".header-left">
@@ -20,7 +21,8 @@
       </div>
     </template>
     <template v-slot:card>
-      <AuthorCard v-for="author in authors" :key="author.id" :author="author"/>
+      <AuthorCard v-for="author in authors" :key="author.id" :author="author"
+      @edit-author="switchComponent(EditAuthorForm); selectAuthor(author)"/>
     </template>
     <template v-slot:pagination>
       <Pagination
@@ -44,12 +46,13 @@ import SearchBar from "@/components/UI/SearchBar.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 import BaseModal from "@/components/UI/BaseModal.vue";
-import CreateAuthorForm from "@/components/UI/Forms/CreateAuthorForm.vue";
+import CreateAuthorForm from "@/components/UI/Forms/Authors/CreateAuthorForm.vue";
+import EditAuthorForm from "@/components/UI/Forms/Authors/EditAuthorForm.vue";
 
 const authors = ref<Author[]>([]);
 const currentPage = ref(1);
 const totalItems = ref(2);
-const itemsPerPage = 2;
+const itemsPerPage = 5;
 const isDisabled = ref(false);
 const isFirstLoad = ref(true);
 const query = ref("");
@@ -58,6 +61,7 @@ const auth = useAuthenticationStore();
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 const currentForm = shallowRef(CreateAuthorForm);
 const toggleModal = ref(false);
+const selectedAuthor = ref();
 
 const fetchRequest = async (page: number, perPage: number, query: string) => {
   try {
@@ -105,6 +109,10 @@ const fetchRequest = async (page: number, perPage: number, query: string) => {
 const switchComponent = (component: any) => {
   currentForm.value = component;
   toggleModal.value = true
+}
+
+const selectAuthor = (author: Author) => {
+  selectedAuthor.value = author
 }
 
 const handleSubmit = (isSuccess: boolean) => {

@@ -34,11 +34,11 @@
     },
     {
       "id": 4,
-      "name": "Emily",
+      "name": "Emily2",
       "surname": "Brown",
       "userId": 1,
       "created_at": "2024-05-05T12:00:00Z",
-      "updated_at": "2024-05-05T12:00:00Z"
+      "updated_at": "2025-07-10T19:08:38.803Z"
     },
     {
       "id": 5,
@@ -49,60 +49,18 @@
       "updated_at": "2024-05-05T12:00:00Z"
     },
     {
-      "name": "ddd",
-      "surname": "dsdsds",
-      "created_at": "2025-07-10T09:56:18.981Z",
-      "updated_at": "2025-07-10T09:56:18.982Z",
+      "name": "peter",
+      "surname": "notgriffen",
+      "created_at": "2025-07-10T11:26:02.310Z",
+      "updated_at": "2025-07-10T19:08:56.116Z",
       "id": 6
     },
     {
-      "name": "dsds",
-      "surname": "dsdsds",
-      "created_at": "2025-07-10T10:04:24.690Z",
-      "updated_at": "2025-07-10T10:04:24.690Z",
+      "name": "sdds",
+      "surname": "dsds",
+      "created_at": "2025-07-10T19:10:57.121Z",
+      "updated_at": "2025-07-10T19:10:57.122Z",
       "id": 7
-    },
-    {
-      "name": "dsds",
-      "surname": "dsdsds",
-      "created_at": "2025-07-10T10:05:16.738Z",
-      "updated_at": "2025-07-10T10:05:16.738Z",
-      "id": 8
-    },
-    {
-      "name": "dsdsds",
-      "surname": "dsdsds",
-      "created_at": "2025-07-10T12:42:12.252Z",
-      "updated_at": "2025-07-10T12:42:12.253Z",
-      "id": 9
-    },
-    {
-      "name": "dsdsdsds",
-      "surname": "dsdsds",
-      "created_at": "2025-07-10T12:46:24.513Z",
-      "updated_at": "2025-07-10T12:46:24.513Z",
-      "id": 10
-    },
-    {
-      "name": "dsds",
-      "surname": "dsdsdsds",
-      "created_at": "2025-07-10T13:11:58.611Z",
-      "updated_at": "2025-07-10T13:11:58.611Z",
-      "id": 11
-    },
-    {
-      "name": "dsds",
-      "surname": "dsdsds",
-      "created_at": "2025-07-10T13:15:30.893Z",
-      "updated_at": "2025-07-10T13:15:30.894Z",
-      "id": 12
-    },
-    {
-      "name": "fdfd",
-      "surname": "fdfdfd",
-      "created_at": "2025-07-10T13:45:20.595Z",
-      "updated_at": "2025-07-10T13:45:20.595Z",
-      "id": 13
     }
   ],
   "posts": [
