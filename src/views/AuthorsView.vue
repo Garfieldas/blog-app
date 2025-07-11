@@ -22,7 +22,8 @@
     </template>
     <template v-slot:card>
       <AuthorCard v-for="author in authors" :key="author.id" :author="author"
-      @edit-author="switchComponent(EditAuthorForm); selectAuthor(author)"/>
+      @edit-author="switchComponent(EditAuthorForm); selectAuthor(author)"
+      @delete-author="switchComponent(DeleteAuthorForm); selectAuthor(author)"/>
     </template>
     <template v-slot:pagination>
       <Pagination
@@ -48,6 +49,7 @@ import { useAuthenticationStore } from "@/stores/authenticationStore";
 import BaseModal from "@/components/UI/BaseModal.vue";
 import CreateAuthorForm from "@/components/UI/Forms/Authors/CreateAuthorForm.vue";
 import EditAuthorForm from "@/components/UI/Forms/Authors/EditAuthorForm.vue";
+import DeleteAuthorForm from "@/components/UI/Forms/Authors/DeleteAuthorForm.vue";
 
 const authors = ref<Author[]>([]);
 const currentPage = ref(1);
@@ -69,6 +71,11 @@ const fetchRequest = async (page: number, perPage: number, query: string) => {
     const fetchedAuthors = fetchedData?.authors;
     const total = fetchedData?.totalItems;
     const toalPages = Math.ceil(total / itemsPerPage);
+
+    if (fetchedAuthors.length === 0 && total > 0 && currentPage.value > 1){
+      currentPage.value = currentPage.value - 1;
+      return;
+    }
 
     if (page > toalPages && toalPages > 0) {
       currentPage.value = toalPages;

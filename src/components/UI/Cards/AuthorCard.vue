@@ -11,7 +11,7 @@
 
     <div class="buttons" v-if="store.isLoggedIn">
       <i class="fa-solid fa-eye" @click="emit('edit-author', author)"></i>
-      <i class="fa-solid fa-trash"></i>
+      <i class="fa-solid fa-trash" @click="emit('delete-author', author)"></i>
     </div>
   </div>
 </template>
@@ -20,5 +20,5 @@ import { toDate, displayDate  } from '../../../../utils/dateService';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 const props = defineProps(['author']);
 const store = useAuthenticationStore();
-const emit = defineEmits(['edit-author']);
+const emit = defineEmits(['edit-author', 'delete-author']);
 </script>
