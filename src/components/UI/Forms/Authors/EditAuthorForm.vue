@@ -1,16 +1,18 @@
 <template>
     <form @submit.prevent="onSubmit">
-        <h3>Create Author</h3>
-        
+        <h3>Edit Author</h3>
+
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" id="name" required maxlength="20" v-model="name" :class="{ 'is-invalid': errors.name }" />
+            <input type="text" id="name" required maxlength="20" v-model="name"
+                :class="{ 'is-invalid': errors.name }" />
             <div v-if="errors.name" class="error-message">{{ errors.name }}</div>
         </div>
 
         <div class="form-group">
             <label for="surname">Surname</label>
-            <input type="text" id="surname" required maxlength="20" v-model="surname" :class="{ 'is-invalid': errors.surname }" />
+            <input type="text" id="surname" required maxlength="20" v-model="surname"
+                :class="{ 'is-invalid': errors.surname }" />
             <div v-if="errors.surname" class="error-message">{{ errors.surname }}</div>
         </div>
 
@@ -22,20 +24,24 @@
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { createAuthor } from '@/composables/authorService';
+import { editAuthor } from '@/composables/authorService';
 import { useNotificationStore } from '@/stores/notificationStore';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
+const props = defineProps(['author']);
 const store = useNotificationStore();
 const emit = defineEmits(['submit-form']);
-const isSuccess = ref(false)
+const isSuccess = ref(false);
+const id = ref();
 
 const authorSchema = z.object({
     name: z.string()
+        .trim()
         .min(3, 'Name is required (minimum 3 characters)')
         .max(20, 'Name must be a maximum of 20 characters'),
     surname: z.string()
-        .min(5, 'Surname is required (minimum 5 characters)')
+        .trim()
+        .min(3, 'Surname is required (minimum 5 characters)')
         .max(20, 'Surname must be a maximum of 20 characters')
 });
 
@@ -47,23 +53,31 @@ const [name] = defineField('name');
 const [surname] = defineField('surname');
 
 const onSubmit = handleSubmit(async (values) => {
-    const response = await createAuthor(values.name, values.surname);
+    const response = await editAuthor(id.value, values.name, values.surname);
 
     if (!response.status) {
         store.AddNotification({
             type: 'error',
-            message: response?.error
+            message: response.error
         });
-    } else {
+    }
+    else{
         store.AddNotification({
             type: 'success',
-            message: 'Author created successfully!'
+            message: 'Author edited successfully'
         });
         resetForm();
         isSuccess.value = true;
         emit('submit-form', isSuccess)
     }
-});
+})
+
+watch(() => props.author, (newAuthor) => {
+    name.value = newAuthor.name;
+    surname.value = newAuthor.surname;
+    id.value = newAuthor.id
+}, { immediate: true })
+
 </script>
 
 <style scoped>
