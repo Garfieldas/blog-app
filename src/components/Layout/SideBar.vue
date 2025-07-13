@@ -6,8 +6,10 @@
   <nav>
     <ul class="nav-group">
 
+      <router-link :to="{ name: 'posts'}">
       <li @click="$emit('clicked')">
         <i class="fa-solid fa-envelope"></i> Posts</li>
+      </router-link>
 
       <li @click="$emit('clicked')"><i class="fa-regular fa-address-card"></i> Authors</li>
 
@@ -21,3 +23,10 @@
 <script setup lang="ts">
 const props = defineProps(['showNavBar'])
 </script>
+
+<style>
+a {
+  text-decoration: none;
+  color: inherit;
+}
+</style>
