@@ -1,4 +1,5 @@
 import api from "./api";
+import { getErrorMessage } from "./errorService";
 
 export const getAllAuthors = async () => {
     try {
@@ -6,6 +7,6 @@ export const getAllAuthors = async () => {
         return response.data;
     }
     catch(error: any){
-        return error.message;
+        throw new Error(getErrorMessage(error));
     }
 }
