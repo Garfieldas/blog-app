@@ -3,6 +3,7 @@
   <AppHeader @showNavBar="showNavBar" />
   <Overlay :showOverlay="showOverlay" @click="closeNavBar" />
   <NotificationsList />
+  <RouterView />
 </template>
 
 <script setup lang="ts">
