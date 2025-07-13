@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import PostsView from "@/views/PostsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,13 +9,13 @@ const router = createRouter({
         {
           path: "",
           name: "posts",
-          component: PostsView,
+          component: () => import("@/views/PostsView.vue"),
           alias: "/posts",
         },
         {
           path: "posts/:id",
           name: "postDetails",
-          component: () => "@/views/PostDetails.vue",
+          component: () => import("@/views/PostDetails.vue"),
           props: true,
         },
       ],
@@ -24,12 +23,17 @@ const router = createRouter({
     {
       path: "/authors",
       name: "authors",
-      component: () => "@/views/AuthorsView.vue",
+      component: () => import("@/views/AuthorsView.vue")
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import("@/views/LoginView.vue")
     },
     {
       path: "/:pathMatch(.*)",
       name: "NotFound",
-      component: () => "@/views/ErrorView.vue",
+      component: () => import("@/views/ErrorView.vue"),
     },
   ],
 });
