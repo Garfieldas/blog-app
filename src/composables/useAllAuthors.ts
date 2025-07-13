@@ -6,7 +6,7 @@ export const useAllAuthors = () => {
 
     const fetchrequest = async () => {
         const response = await getAllAuthors();
-        const data = response.data;
+        const data = response
         authors.value = data;
     }
 

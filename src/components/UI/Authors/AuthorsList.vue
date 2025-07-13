@@ -1,6 +1,6 @@
 <template>
     <div class="card-wrapper">
-        <AuthorCard  v-for="author in authors" :key="author.id"/>
+        <AuthorCard  v-for="author in authors" :key="author.id" :author="author"/>
     </div>
 </template>
 
