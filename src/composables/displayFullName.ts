@@ -1,0 +1,1 @@
+export const displayFullName = (name: string, surname:string) => `${name} ${surname}`
