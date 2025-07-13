@@ -1,17 +1,14 @@
 <template>
     <div class="notification-container">
-        <Notification v-for="notification in notifications" :key="notification.id" :notification="notification" />
+        <Notification v-for="notification in store.notifications" :key="notification.id"
+         :notification="notification"
+         @remove-notification="selectId" />
     </div>
 </template>
 <script setup lang="ts">
 import { useNotificationStore } from '@/stores/notificationsStore';
 import Notification from './Notification.vue';
 const store = useNotificationStore();
-const notifications = store.notifications;
-store.addNotification({
-    type: 'error',
-    message: 'Demo'
-})
 const selectId = (id: string) => {
     store.removeNotification(id);
 }
