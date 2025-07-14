@@ -13,7 +13,7 @@
 
     </RouterLink>
     <div class="buttons" v-if="store.isLoggedIn">
-      <i class="fa-solid fa-eye" @click="toggleEdit = true"></i>
+      <i class="fa-solid fa-pen-to-square" @click="emit('edit-post', post)"></i>
       <i class="fa-solid fa-trash"></i>
     </div>
   </div>
@@ -23,5 +23,5 @@ import { toDate, displayDate  } from '../../../../utils/dateService';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 const props = defineProps(['post']);
 const store = useAuthenticationStore();
-const toggleEdit = defineModel('toggleEdit');
+const emit = defineEmits(['edit-post']);
 </script>

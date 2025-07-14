@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="onSubmit">
-        <h3>Are you sure?</h3>
+        <h3>Do you want to delete?</h3>
 
         <div class="form-group">
             <label for="name">Name</label>

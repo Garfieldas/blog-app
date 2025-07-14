@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <h3>Create Post</h3>
+    <h3>Edit Post</h3>
     <div class="form-group">
       <label for="title">Title</label>
       <input type="text" id="title" required maxlength="20" v-model="title" :class="{ 'is-invalid': errors.title }"/>
@@ -25,14 +25,16 @@
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { createPost } from '@/composables/postService';
+import { editPost } from '@/composables/postService';
 import { useNotificationStore } from '@/stores/notificationStore';
 import selectAuthor from './selectAuthor.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
+const props = defineProps(['post'])
 const store = useNotificationStore();
 const emit = defineEmits(['submit-form']);
 const isSuccess = ref(false);
+const id = ref();
 
 const postSchema = z.object({
     title: z.string()
@@ -56,9 +58,8 @@ const [authorId] = defineField('authorId');
 const [body] = defineField('body');
 
 const onSubmit = handleSubmit(async (values) => {
-    const created_at = new Date().toISOString();
     const updated_at = new Date().toISOString();
-    const response = await createPost(values.title, values.authorId, values.body, created_at, updated_at);
+    const response = await editPost(id.value, values.title, values.authorId, values.body, updated_at);
 
     if (!response.status) {
         store.AddNotification({
@@ -68,13 +69,20 @@ const onSubmit = handleSubmit(async (values) => {
     } else {
         store.AddNotification({
             type: 'success',
-            message: 'Post created successfully!'
+            message: 'Post updated successfully!'
         });
         resetForm();
         isSuccess.value = true;
         emit('submit-form', isSuccess)
     }
 });
+
+watch(() => props.post, (newPost) => {
+  id.value = newPost.id
+  title.value = newPost.title;
+  authorId.value = newPost.author.id;
+  body.value = newPost.body;
+}, {immediate: true})
 
 </script>
 

@@ -48,13 +48,36 @@ export const getSinglePost = async (id: number) => {
   }
 }
 
-export const createPost = async (title: string, authorId: number, body: string) => {
-  const created_at = new Date().toISOString();
-  const updated_at = new Date().toISOString();
+export const createPost = async (title: string, authorId: number, body: string, created_at: string, updated_at: string) => {
   const post = { title, authorId, body, created_at, updated_at };
   const token = readStorage();
   try {
       await api.post('/posts', post, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return { status: true }
+  }
+  catch (error: any) {
+    let errorMessage = '';
+
+    if (error.response && error.response.status === 401) {
+      errorMessage = 'Failed to authorize. Please log in again';
+    }
+    else {
+      errorMessage = 'Network failed';
+    }
+
+    return { status: false, error: errorMessage }
+  }
+}
+
+export const editPost = async (id: number, title: string, authorId: number, body: string, updated_at: string) => {
+  const post = { id, title, authorId, body, updated_at };
+  const token = readStorage();
+  try {
+      await api.patch(`/posts/${id}`, post, {
       headers: {
         Authorization: `Bearer ${token}`
       }

@@ -53,7 +53,8 @@ const [name] = defineField('name');
 const [surname] = defineField('surname');
 
 const onSubmit = handleSubmit(async (values) => {
-    const response = await editAuthor(id.value, values.name, values.surname);
+    const updated_at = new Date().toISOString();
+    const response = await editAuthor(id.value, values.name, values.surname, updated_at);
 
     if (!response.status) {
         store.AddNotification({
