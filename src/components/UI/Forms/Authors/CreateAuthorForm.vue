@@ -49,7 +49,9 @@ const [name] = defineField('name');
 const [surname] = defineField('surname');
 
 const onSubmit = handleSubmit(async (values) => {
-    const response = await createAuthor(values.name, values.surname);
+    const created_at = new Date().toISOString();
+    const updated_at = new Date().toISOString();
+    const response = await createAuthor(values.name, values.surname, created_at, updated_at);
 
     if (!response.status) {
         store.AddNotification({

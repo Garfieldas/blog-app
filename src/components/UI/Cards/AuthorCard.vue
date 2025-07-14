@@ -10,7 +10,7 @@
     <p v-else>Created_at: {{ displayDate(author.created_at) }}</p>
 
     <div class="buttons" v-if="store.isLoggedIn">
-      <i class="fa-solid fa-eye" @click="emit('edit-author', author)"></i>
+      <i class="fa-solid fa-pen-to-square" @click="emit('edit-author', author)"></i>
       <i class="fa-solid fa-trash" @click="emit('delete-author', author)"></i>
     </div>
   </div>

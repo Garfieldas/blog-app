@@ -47,9 +47,7 @@ export const getUnPaginatedAuthors = async () => {
   }
 }
 
-export const createAuthor = async (name: string, surname: string) => {
-  const created_at = new Date().toISOString();
-  const updated_at = new Date().toISOString();
+export const createAuthor = async (name: string, surname: string, created_at: string, updated_at: string) => {
   const author = { name, surname, created_at, updated_at };
   const token = readStorage();
   try {
@@ -74,8 +72,7 @@ export const createAuthor = async (name: string, surname: string) => {
   }
 }
 
-export const editAuthor = async (id: number, name: string, surname: string) => {
-  const updated_at = new Date().toISOString();
+export const editAuthor = async (id: number, name: string, surname: string, updated_at: string) => {
   const author = { name, surname, updated_at }
   const token = readStorage();
   try {

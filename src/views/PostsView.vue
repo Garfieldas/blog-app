@@ -2,7 +2,8 @@
   <BaseModal v-model:toggle-modal="toggleModal" @modal-closed="toggleModal = false">
     <slot>
       <component :is="currentForm"
-      @submit-form="handleSubmit" />
+      @submit-form="handleSubmit"
+      :post="selectedPost" />
     </slot>
   </BaseModal>
   
@@ -27,6 +28,7 @@
         v-for="post in posts"
         :key="post.id"
         :post="post"
+        @edit-post="switchComponent(EditPostForm); selectPost(post)"
       />
     </template>
 
@@ -53,6 +55,7 @@ import { useNotificationStore } from "@/stores/notificationStore";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 import BaseModal from "@/components/UI/BaseModal.vue";
 import CreatePostForm from "@/components/UI/Forms/Posts/CreatePostForm.vue";
+import EditPostForm from "@/components/UI/Forms/Posts/EditPostForm.vue";
 
 const posts = ref<Post[]>([]);
 const currentPage = ref(1);
@@ -66,6 +69,7 @@ const auth = useAuthenticationStore();
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 const toggleModal = ref(false);
 const currentForm = shallowRef(CreatePostForm);
+const selectedPost = ref();
 
 
 const fetchRequest = async (page: number, perPage: number, query: string) => {
@@ -74,6 +78,11 @@ const fetchRequest = async (page: number, perPage: number, query: string) => {
     const fetchedPosts = fetchedData?.posts;
     const total = fetchedData?.totalItems;
     const totalPages = Math.ceil(total / itemsPerPage);
+
+    if (fetchedPosts.length === 0 && total > 0 && currentPage.value > 1){
+      currentPage.value = currentPage.value - 1;
+      return;
+    }
 
     if (page > totalPages && totalPages > 0) {
       currentPage.value = totalPages;
@@ -114,6 +123,10 @@ const fetchRequest = async (page: number, perPage: number, query: string) => {
 const switchComponent = (component: any) => {
   toggleModal.value = true;
   currentForm.value = component;
+}
+
+const selectPost = (post: Post) => {
+  selectedPost.value = post
 }
 
 const handleSubmit = (isSuccess: boolean) => {
