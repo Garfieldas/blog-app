@@ -10,11 +10,11 @@
   "authors": [
     {
       "id": 1,
-      "name": "John2",
+      "name": "John",
       "surname": "Doe",
       "userId": 1,
       "created_at": "2024-05-05T12:00:00Z",
-      "updated_at": "2025-07-14T05:56:43.021Z"
+      "updated_at": "2024-05-05T12:00:00Z"
     },
     {
       "id": 2,
@@ -47,20 +47,6 @@
       "userId": 1,
       "created_at": "2024-05-05T12:00:00Z",
       "updated_at": "2024-05-05T12:00:00Z"
-    },
-    {
-      "name": "peter",
-      "surname": "notgriffen",
-      "created_at": "2025-07-10T11:26:02.310Z",
-      "updated_at": "2025-07-10T19:08:56.116Z",
-      "id": 6
-    },
-    {
-      "name": "sdds",
-      "surname": "dsds",
-      "created_at": "2025-07-10T19:10:57.121Z",
-      "updated_at": "2025-07-10T19:10:57.122Z",
-      "id": 7
     }
   ],
   "posts": [
@@ -68,10 +54,10 @@
       "id": 1,
       "title": "First Post",
       "body": "This is the body of the first post. It contains more than twenty five words to fulfill the requirement of the task. This is just a filler text to meet the criteria.",
-      "authorId": 6,
+      "authorId": 1,
       "userId": 1,
       "created_at": "2024-05-05T12:00:00Z",
-      "updated_at": "2025-07-14T05:16:14.337Z"
+      "updated_at": "2024-05-05T12:00:00Z"
     },
     {
       "id": 2,
@@ -153,14 +139,6 @@
       "created_at": "2024-05-05T17:14:15Z",
       "updated_at": "2024-05-05T17:14:15Z",
       "id": 10
-    },
-    {
-      "title": "new post2",
-      "authorId": 3,
-      "body": "dsdsdsdsdsd",
-      "created_at": "2025-07-11T21:37:37.481Z",
-      "updated_at": "2025-07-11T21:37:45.426Z",
-      "id": 11
     }
   ]
 }

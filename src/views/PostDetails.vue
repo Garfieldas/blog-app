@@ -15,7 +15,7 @@
       <div class="post-actions" v-if="auth.isLoggedIn">
         <a class="button" @click="goBack">Back</a>
         <a class="button" @click="switchComponent(EditPostForm)">Edit</a>
-        <a class="button delete"> Delete</a>
+        <a class="button delete" @click="switchComponent(DeletePostForm)"> Delete</a>
       </div>
       <div class="post-actions" v-else>
         <a class="button" @click="goBack">Back</a>
@@ -47,6 +47,7 @@ import { useNotificationStore } from '@/stores/notificationStore';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import EditPostForm from '@/components/UI/Forms/Posts/EditPostForm.vue';
 import BaseModal from '@/components/UI/BaseModal.vue';
+import DeletePostForm from '@/components/UI/Forms/Posts/DeletePostForm.vue';
 
 
 const props = defineProps(['id']);
@@ -87,7 +88,11 @@ const switchComponent = (component: any) => {
   toggleModal.value = true;
 }
 
-const handleSubmit = (isSuccess: boolean) => {
+const handleSubmit = (isSuccess: boolean, itemDeleted: boolean) => {
+  if (itemDeleted){
+    router.replace({name: 'posts'})
+    return;
+  }
   if (isSuccess) {
     fetchPost(props.id);
   }

@@ -29,6 +29,7 @@
         :key="post.id"
         :post="post"
         @edit-post="switchComponent(EditPostForm); selectPost(post)"
+        @delete-post="switchComponent(DeletePostForm); selectPost(post)"
       />
     </template>
 
@@ -56,6 +57,7 @@ import { useAuthenticationStore } from "@/stores/authenticationStore";
 import BaseModal from "@/components/UI/BaseModal.vue";
 import CreatePostForm from "@/components/UI/Forms/Posts/CreatePostForm.vue";
 import EditPostForm from "@/components/UI/Forms/Posts/EditPostForm.vue";
+import DeletePostForm from "@/components/UI/Forms/Posts/DeletePostForm.vue";
 
 const posts = ref<Post[]>([]);
 const currentPage = ref(1);

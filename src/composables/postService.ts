@@ -97,3 +97,27 @@ export const editPost = async (id: number, title: string, authorId: number, body
     return { status: false, error: errorMessage }
   }
 }
+
+export const deletePost = async (id: number) => {
+  const token = readStorage();
+  try {
+      await api.delete(`/posts/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return { status: true }
+  }
+  catch (error: any) {
+    let errorMessage = '';
+
+    if (error.response && error.response.status === 401) {
+      errorMessage = 'Failed to authorize. Please log in again';
+    }
+    else {
+      errorMessage = 'Network failed';
+    }
+
+    return { status: false, error: errorMessage }
+  }
+}
