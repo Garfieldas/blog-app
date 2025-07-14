@@ -28,6 +28,25 @@ export const getAllAuthors = async (pageNumber: number, itemsPerPage: number, qu
   }
 };
 
+export const getUnPaginatedAuthors = async () => {
+  try {
+    const response = await api.get('/authors/');
+    const authors = response.data;
+
+    return {
+      authors,
+      status: true
+    }
+  }
+
+  catch (error: any) {
+    return {
+      error: error.message,
+      status: false
+    }
+  }
+}
+
 export const createAuthor = async (name: string, surname: string) => {
   const created_at = new Date().toISOString();
   const updated_at = new Date().toISOString();

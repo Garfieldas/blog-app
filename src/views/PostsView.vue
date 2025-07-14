@@ -1,43 +1,9 @@
 <template>
-  <BaseModal
-    v-model:toggle-modal="toggleCreate"
-    @modal-closed="toggleCreate = false"
-    title="Create Post"
-  >
-    <template v-slot:modal-content>
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" id="title" required />
-      </div>
-      <div class="form-group">
-        <label for="author">Author</label>
-        <input type="text" id="author" required />
-      </div>
-      <div class="form-group">
-        <label for="content">Content</label>
-        <textarea for="content" rows="8"></textarea>
-      </div>
-    </template>
-  </BaseModal>
-  <BaseModal
-    v-model:toggle-modal="toggleEdit"
-    @modal-closed="toggleEdit = false"
-    title="Edit Post"
-  >
-    <template v-slot:modal-content>
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" id="title" required />
-      </div>
-      <div class="form-group">
-        <label for="author">Author</label>
-        <input type="text" id="author" required />
-      </div>
-      <div class="form-group">
-        <label for="content">Content</label>
-        <textarea for="content" rows="8"></textarea>
-      </div>
-    </template>
+  <BaseModal v-model:toggle-modal="toggleModal" @modal-closed="toggleModal = false">
+    <slot>
+      <component :is="currentForm"
+      @submit-form="handleSubmit" />
+    </slot>
   </BaseModal>
   
   <Teleport to=".header-left">
@@ -52,7 +18,7 @@
     </template>
     <template v-slot:buttons>
       <div class="post-actions" v-if="auth.isLoggedIn">
-        <a class="button" @click="toggleCreate = true">Create new Post</a>
+        <a class="button" @click="switchComponent(CreatePostForm)">Create new Post</a>
       </div>
     </template>
 
@@ -61,7 +27,6 @@
         v-for="post in posts"
         :key="post.id"
         :post="post"
-        v-model:toggleEdit="toggleEdit"
       />
     </template>
 
@@ -77,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import { getAllPosts } from "@/composables/postService";
 import type { Post } from "@/types/postType";
 import Pagination from "@/components/UI/Pagination.vue";
@@ -87,10 +52,11 @@ import SearchBar from "@/components/UI/SearchBar.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 import BaseModal from "@/components/UI/BaseModal.vue";
+import CreatePostForm from "@/components/UI/Forms/Posts/CreatePostForm.vue";
 
 const posts = ref<Post[]>([]);
 const currentPage = ref(1);
-const itemsPerPage = 2;
+const itemsPerPage = 5;
 const totalItems = ref(0);
 const isDisabled = ref(false);
 const isFirstLoad = ref(true);
@@ -98,8 +64,8 @@ const query = ref("");
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-const toggleCreate = ref(false);
-const toggleEdit = ref(false);
+const toggleModal = ref(false);
+const currentForm = shallowRef(CreatePostForm);
 
 
 const fetchRequest = async (page: number, perPage: number, query: string) => {
@@ -144,6 +110,18 @@ const fetchRequest = async (page: number, perPage: number, query: string) => {
     });
   }
 };
+
+const switchComponent = (component: any) => {
+  toggleModal.value = true;
+  currentForm.value = component;
+}
+
+const handleSubmit = (isSuccess: boolean) => {
+  if (isSuccess){
+    fetchRequest(currentPage.value, itemsPerPage, query.value);
+  }
+  toggleModal.value = false
+}
 
 watch(
   currentPage,
