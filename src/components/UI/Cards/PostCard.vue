@@ -14,7 +14,7 @@
     </RouterLink>
     <div class="buttons" v-if="store.isLoggedIn">
       <i class="fa-solid fa-pen-to-square" @click="emit('edit-post', post)"></i>
-      <i class="fa-solid fa-trash"></i>
+      <i class="fa-solid fa-trash" @click="emit('delete-post', post)"></i>
     </div>
   </div>
 </template>
@@ -23,5 +23,5 @@ import { toDate, displayDate  } from '../../../../utils/dateService';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 const props = defineProps(['post']);
 const store = useAuthenticationStore();
-const emit = defineEmits(['edit-post']);
+const emit = defineEmits(['edit-post', 'delete-post']);
 </script>
