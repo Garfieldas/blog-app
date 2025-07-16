@@ -3,15 +3,16 @@
 </template>
 <script setup lang="ts">
 import Form from '@/components/UI/Form.vue';
-import { getToken } from '@/composables/authorizationService';
-import { ref } from 'vue';
+import { getToken } from '@/services/authorizationService';
 import { useRouter } from 'vue-router';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { ref } from 'vue';
+
+const router = useRouter();
+const store = useNotificationStore();
 
 const email = ref('');
 const password = ref('');
-const router = useRouter();
-const store = useNotificationStore();
 
 const login = async () => {
     email.value = email.value.trim();
@@ -23,22 +24,19 @@ const login = async () => {
         })
         return;
     }
-    const response = await getToken(email.value, password.value);
-    const status = response?.status;
-    if (status) {
-        router.replace({ name: 'posts' })
+    try {
+        await getToken(email.value, password.value);
         store.AddNotification({
             type: 'success',
-            message: 'Authorization was successfull'
-        })
-        email.value = '';
-        password.value = ''
+            message: 'Authorization was successfully!'
+        });
+        router.replace({ name: 'posts' })
     }
-    else {
+    catch (error: any){
         store.AddNotification({
             type: 'error',
-            message: 'Failed to authorize'
+            message: error
         })
     }
-}
+};
 </script>

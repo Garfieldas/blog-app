@@ -1,6 +1,6 @@
 <template>
   <main class="main" v-if="post">
-    <BaseModal @modal-closed="toggleModal = false" v-model:toggle-modal="toggleModal">
+      <BaseModal @modal-closed="toggleModal = false" v-model:toggle-modal="toggleModal">
       <slot>
         <component :is="currentForm" @submit-form="handleSubmit" :post="post" />
       </slot>
@@ -22,14 +22,10 @@
       </div>
       <div class="post-meta">
         <p><strong>Author</strong>: {{ post.author.name }} {{ post.author.surname }}</p>
-        <p v-if="toDate(post.created_at) > toDate(post.updated_at)">
-          Created_at: {{ displayDate(post.created_at) }}</p>
-
-        <p v-else-if="toDate(post.created_at) < toDate(post.updated_at)">
-          Updated_at:{{ displayDate(post.updated_at) }}</p>
-
-        <p v-else>Created_at: {{ displayDate(post.created_at) }}</p>
-
+        <p>
+        {{ displayDate(post.created_at, post.updated_at).label }}:
+        {{ displayDate(post.created_at, post.updated_at).date }}
+      </p>
       </div>
     </div>
   </main>
@@ -38,55 +34,22 @@
   </p>
 </template>
 <script setup lang="ts">
-import { getSinglePost } from '@/composables/postService';
-import { onMounted, ref, shallowRef, watch } from 'vue';
-import type { Post } from '@/types/postType';
-import { useRouter } from 'vue-router';
-import { toDate, displayDate } from '../../utils/dateService';
-import { useNotificationStore } from '@/stores/notificationStore';
+import { onMounted  } from 'vue';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import EditPostForm from '@/components/UI/Forms/Posts/EditPostForm.vue';
 import BaseModal from '@/components/UI/BaseModal.vue';
 import DeletePostForm from '@/components/UI/Forms/Posts/DeletePostForm.vue';
+import { useSignlePost } from '@/composables/useSinglePost';
+import { useComponent } from '@/composables/switchComponent';
+import { displayDate } from '../utils/formatDate';
 
+const props = defineProps(['id'])
 
-const props = defineProps(['id']);
-const post = ref<Post | null>(null);
-const router = useRouter();
-const goBack = () => router.go(-1);
-const store = useNotificationStore();
+const { post, goBack, fetchPost, router } = useSignlePost();
+
+const { currentForm, toggleModal, switchComponent } = useComponent();
+
 const auth = useAuthenticationStore();
-const isFirstLoad = ref(false)
-const currentForm = shallowRef(EditPostForm);
-const toggleModal = ref(false);
-
-const fetchPost = async (id: number) => {
-
-  const fetchedData = await getSinglePost(id);
-  const status = fetchedData?.status
-  if (status) {
-    post.value = fetchedData.post;
-    if(isFirstLoad.value === false){
-    store.AddNotification({
-      type: 'success',
-      message: 'Post fetched successfully'
-    })
-  }
-  isFirstLoad.value = true;
-  }
-  else {
-    router.push({ name: 'postNotFound' })
-    store.AddNotification({
-      type: 'error',
-      message: fetchedData?.error
-    })
-  }
-}
-
-const switchComponent = (component: any) => {
-  currentForm.value = component;
-  toggleModal.value = true;
-}
 
 const handleSubmit = (isSuccess: boolean, itemDeleted: boolean) => {
   if (itemDeleted){
@@ -101,11 +64,6 @@ const handleSubmit = (isSuccess: boolean, itemDeleted: boolean) => {
 
 onMounted(async () => {
   fetchPost(props.id)
-})
-
-
-watch(() => props.id, (newId) => {
-  fetchPost(newId)
 })
 
 </script>

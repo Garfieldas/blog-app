@@ -4,12 +4,12 @@
 
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" id="name" required maxlength="20" v-model="name" disabled/>
+            <input type="text" id="name" required maxlength="20" v-model="name" disabled />
         </div>
 
         <div class="form-group">
             <label for="surname">Surname</label>
-            <input type="text" id="surname" required maxlength="20" v-model="surname" disabled/>
+            <input type="text" id="surname" required maxlength="20" v-model="surname" disabled />
         </div>
 
         <button type="submit">Submit</button>
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { deleteAuthor } from '@/composables/authorService';
+import { deleteAuthor } from '@/services/authorService';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { ref, watch } from 'vue';
 
@@ -30,21 +30,20 @@ const name = ref('');
 const surname = ref('')
 
 const onSubmit = async () => {
-    const response = await deleteAuthor(id.value);
-
-    if (!response.status) {
-        store.AddNotification({
-            type: 'error',
-            message: response.error
-        });
-    }
-    else{
+    try {
+        await deleteAuthor(id.value);
         store.AddNotification({
             type: 'success',
             message: 'Author deleted successfully'
         });
         isSuccess.value = true;
         emit('submit-form', isSuccess)
+    }
+    catch (error: any) {
+        store.AddNotification({
+            type: 'error',
+            message: error
+        });
     }
 }
 

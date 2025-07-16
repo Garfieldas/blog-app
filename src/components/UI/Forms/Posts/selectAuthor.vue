@@ -5,25 +5,24 @@
 </template>
 
 <script setup lang="ts">
-import { getUnPaginatedAuthors } from '@/composables/authorService';
+import { getAuthors } from '@/services/authorService';
 import type { Author } from '@/types/authorType';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useNotificationStore } from '@/stores/notificationStore';
 
 const authors = ref<Author[]>([]);
 const selectedAuthor = defineModel('selectedAuthor');
 
 const fetchRequest = async () => {
-const store = useNotificationStore();
-  const response = await getUnPaginatedAuthors();
-  const status = response.status;
-  if (status){
-    authors.value = response.authors;
+  const store = useNotificationStore();
+  try {
+  const response = await getAuthors()
+  authors.value = response.authors
   }
-  else {
+  catch(error: any){
     store.AddNotification({
       type: 'error',
-      message: 'Failed to load author list'
+      message: error
     })
   }
 }

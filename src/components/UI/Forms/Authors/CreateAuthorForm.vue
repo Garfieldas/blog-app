@@ -1,16 +1,18 @@
 <template>
     <form @submit.prevent="onSubmit">
         <h3>Create Author</h3>
-        
+
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" id="name" required maxlength="20" v-model="name" :class="{ 'is-invalid': errors.name }" />
+            <input type="text" id="name" required maxlength="20" v-model="name"
+                :class="{ 'is-invalid': errors.name }" />
             <div v-if="errors.name" class="error-message">{{ errors.name }}</div>
         </div>
 
         <div class="form-group">
             <label for="surname">Surname</label>
-            <input type="text" id="surname" required maxlength="20" v-model="surname" :class="{ 'is-invalid': errors.surname }" />
+            <input type="text" id="surname" required maxlength="20" v-model="surname"
+                :class="{ 'is-invalid': errors.surname }" />
             <div v-if="errors.surname" class="error-message">{{ errors.surname }}</div>
         </div>
 
@@ -22,7 +24,7 @@
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { createAuthor } from '@/composables/authorService';
+import { createAuthor } from '@/services/authorService';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { ref } from 'vue';
 
@@ -49,16 +51,11 @@ const [name] = defineField('name');
 const [surname] = defineField('surname');
 
 const onSubmit = handleSubmit(async (values) => {
-    const created_at = new Date().toISOString();
-    const updated_at = new Date().toISOString();
-    const response = await createAuthor(values.name, values.surname, created_at, updated_at);
 
-    if (!response.status) {
-        store.AddNotification({
-            type: 'error',
-            message: response?.error
-        });
-    } else {
+    try {
+        const created_at = new Date().toISOString();
+        const updated_at = new Date().toISOString();
+        await createAuthor(values.name, values.surname, created_at, updated_at);
         store.AddNotification({
             type: 'success',
             message: 'Author created successfully!'
@@ -66,6 +63,13 @@ const onSubmit = handleSubmit(async (values) => {
         resetForm();
         isSuccess.value = true;
         emit('submit-form', isSuccess)
+    }
+    catch (error: any) {
+
+        store.AddNotification({
+            type: 'error',
+            message: error
+        });
     }
 });
 </script>

@@ -2,7 +2,7 @@
 <NavBar :showNavBar="showNav" @clicked="closeNavBar"/>
 <AppHeader @showNavBar="showNavBar"/>
 <Overlay :showOverlay="showOverlay" @click="closeNavBar"/>
-<Notification />
+<NotificationsList />
 <RouterView />
 </template>
 
@@ -10,7 +10,7 @@
 import NavBar from './components/Layout/NavBar.vue';
 import AppHeader from './components/Layout/AppHeader.vue';
 import Overlay from './components/Layout/Overlay.vue';
-import Notification from './components/Layout/Notification.vue';
+import NotificationsList from './components/Layout/Notifications/NotificationsList.vue';
 import { ref } from 'vue';
 
 const showNav = ref(false);

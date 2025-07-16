@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { deletePost } from '@/composables/postService';
+import { deletePost } from '@/services/postService';
 import { useNotificationStore } from '@/stores/notificationStore';
 import selectAuthor from './selectAuthor.vue';
 import { ref, watch } from 'vue';
@@ -35,23 +35,22 @@ const authorId = ref();
 const body = ref('')
 
 const onSubmit = async () => {
-    const response = await deletePost(id.value);
-
-    if (!response.status) {
-        store.AddNotification({
-            type: 'error',
-            message: response?.error
-        });
-    } else {
+    try {
+        await deletePost(id.value);
         store.AddNotification({
             type: 'success',
-            message: 'Post deleted successfully!'
+            message: 'Post deleted successfully'
         });
         isSuccess.value = true;
-        itemDeleted.value = true
-        emit('submit-form', isSuccess, itemDeleted)
+        emit('submit-form', isSuccess)
     }
-};
+    catch (error: any) {
+        store.AddNotification({
+            type: 'error',
+            message: error
+        });
+    }
+}
 
 watch(() => props.post, (newPost) => {
   id.value = newPost.id

@@ -11,18 +11,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
 
 const currentPage: any = defineModel('currentPage');
-const totalItems: any = defineModel('totalItems');
 const isDisabled = defineModel<boolean>('isDisabled');
-const props = defineProps(['itemsPerPage'])
-const totalPages = computed(() => {
-  return Math.ceil(totalItems.value / props.itemsPerPage)
-})
+const props = defineProps(['totalPages', 'totalItems'])
 
 const nextBtn = () => {
-  if (currentPage.value >= totalPages || isDisabled.value){
+  if (currentPage.value >= props.totalPages || isDisabled.value){
     return;
   }
   currentPage.value++;
