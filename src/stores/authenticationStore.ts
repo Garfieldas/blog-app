@@ -1,23 +1,21 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
-export const useAuthenticationStore = defineStore('auth', {
-    state: () => ({
-        isLoggedIn:
-        !! localStorage.getItem('token'),
-        user: JSON.parse(localStorage.getItem('user') || 'null')
-    }),
-    actions: {
-        Login(token: string, user: any) {
-            this.isLoggedIn = true;
-            this.user = user
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user))
-        },
-        Logout() {
-            this.isLoggedIn = false;
-            this.user = null;
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-        }
+export const useAuthenticationStore = defineStore('auth', () => {
+    const isLoggedIn = ref(!!localStorage.getItem('token'));
+    const user = ref(JSON.parse(localStorage.getItem('user') || 'null'));
+
+    const Login = (token: string, user: any) => {
+        isLoggedIn.value = true;
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
     }
+
+    const Logout = () => {
+        isLoggedIn.value = false;
+        user.value = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    }
+    return { isLoggedIn, user, Login, Logout }
 })

@@ -24,7 +24,7 @@
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { editAuthor } from '@/composables/authorService';
+import { editAuthor } from '@/services/authorService';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { ref, watch } from 'vue';
 
@@ -53,25 +53,26 @@ const [name] = defineField('name');
 const [surname] = defineField('surname');
 
 const onSubmit = handleSubmit(async (values) => {
-    const updated_at = new Date().toISOString();
-    const response = await editAuthor(id.value, values.name, values.surname, updated_at);
 
-    if (!response.status) {
-        store.AddNotification({
-            type: 'error',
-            message: response.error
-        });
-    }
-    else{
+    try {
+        const updated_at = new Date().toISOString();
+        await editAuthor(id.value, values.name, values.surname, updated_at);
         store.AddNotification({
             type: 'success',
-            message: 'Author edited successfully'
+            message: 'Author edited successfully!'
         });
         resetForm();
         isSuccess.value = true;
         emit('submit-form', isSuccess)
     }
-})
+    catch (error: any) {
+
+        store.AddNotification({
+            type: 'error',
+            message: error
+        });
+    }
+});
 
 watch(() => props.author, (newAuthor) => {
     name.value = newAuthor.name;

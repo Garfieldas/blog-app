@@ -1,16 +1,11 @@
-import axios from "axios";
-import { baseUrl } from "../../utils/constants";
+import { axiosInstance } from "./axiosService";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
-
-const api = axios.create({
-    baseURL: baseUrl
-})
 
 export const getToken = async (email: string, password: string) => {
     const credentials = { email, password }
     const authorize = useAuthenticationStore();
     try {
-        const response = await api.post('/login', credentials);
+        const response = await axiosInstance.post('/login', credentials);
         const user = response.data.user;
         const token = response.data.accessToken;
         if (token) {
@@ -21,9 +16,6 @@ export const getToken = async (email: string, password: string) => {
         }
     }
     catch (error: any) {
-        return {
-            status: false,
-            error: error.message
-        }
+    throw error;
     }
 }

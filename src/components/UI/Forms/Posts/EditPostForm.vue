@@ -25,7 +25,7 @@
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { editPost } from '@/composables/postService';
+import { editPost } from '@/services/postService';
 import { useNotificationStore } from '@/stores/notificationStore';
 import selectAuthor from './selectAuthor.vue';
 import { ref, watch } from 'vue';
@@ -58,23 +58,25 @@ const [authorId] = defineField('authorId');
 const [body] = defineField('body');
 
 const onSubmit = handleSubmit(async (values) => {
-    const updated_at = new Date().toISOString();
-    const response = await editPost(id.value, values.title, values.authorId, values.body, updated_at);
 
-    if (!response.status) {
-        store.AddNotification({
-            type: 'error',
-            message: response?.error
-        });
-    } else {
-        store.AddNotification({
-            type: 'success',
-            message: 'Post updated successfully!'
-        });
-        resetForm();
-        isSuccess.value = true;
-        emit('submit-form', isSuccess)
-    }
+  try {
+    const updated_at = new Date().toISOString();
+    await editPost(id.value,values.title, values.authorId, values.body, updated_at);
+    store.AddNotification({
+      type: 'success',
+      message: 'Post updated successfully!'
+    });
+    resetForm();
+    isSuccess.value = true;
+    emit('submit-form', isSuccess)
+  }
+  catch (error: any) {
+
+    store.AddNotification({
+      type: 'error',
+      message: error
+    });
+  }
 });
 
 watch(() => props.post, (newPost) => {
